@@ -1,0 +1,40 @@
+{{- if .Values.apptest.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "glassbox-ipfto-addon.fullname" . }}-tester
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    marketplace.cloud.google.com/verification: "test"
+  labels:
+    {{- include "glassbox-ipfto-addon.labels" . | nindent 4 }}
+spec:
+  restartPolicy: Never
+  serviceAccountName: {{ .Values.install.serviceAccountName | quote }}
+  containers:
+    - name: tester
+      {{- if .Values.apptest.image.digest }}
+      image: "{{ .Values.apptest.image.repository }}@{{ .Values.apptest.image.digest }}"
+      {{- else }}
+      image: "{{ .Values.apptest.image.repository }}:{{ .Values.apptest.image.tag }}"
+      {{- end }}
+      imagePullPolicy: {{ .Values.apptest.image.pullPolicy }}
+      env:
+        - name: APP_CONFIGMAP
+          value: {{ .Values.install.configMapName | quote }}
+        - name: APP_SERVICE_ACCOUNT
+          value: {{ .Values.install.serviceAccountName | quote }}
+        - name: NAMESPACE
+          value: {{ .Release.Namespace | quote }}
+        - name: APP_RUNTIME_IMAGE
+          value: {{ include "glassbox-ipfto-addon.image" . | quote }}
+        {{- if .Values.apptest.image.digest }}
+        - name: APP_TESTER_IMAGE
+          value: "{{ .Values.apptest.image.repository }}@{{ .Values.apptest.image.digest }}"
+        {{- else }}
+        - name: APP_TESTER_IMAGE
+          value: "{{ .Values.apptest.image.repository }}:{{ .Values.apptest.image.tag }}"
+        {{- end }}
+      resources:
+        {{- toYaml .Values.apptest.resources | nindent 8 }}
+{{- end }}

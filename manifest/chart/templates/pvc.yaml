@@ -1,0 +1,18 @@
+{{- if and (or .Values.job.enabled .Values.apptest.enabled) (eq .Values.storage.type "pvc") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "glassbox-ipfto-screening.fullname" . }}-data
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "glassbox-ipfto-screening.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.pvc.size | quote }}
+  {{- if .Values.storage.pvc.storageClassName }}
+  storageClassName: {{ .Values.storage.pvc.storageClassName | quote }}
+  {{- end }}
+{{- end }}

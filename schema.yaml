@@ -1,0 +1,140 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: Initial customer-facing Helm bundle for standalone and add-on IP/FTO execution.
+    releaseTypes:
+      - Feature
+    recommended: true
+  clusterConstraints:
+    k8sVersion: ">=1.27.0"
+    assistedClusterCreation:
+      type: DISABLED
+      creationGuidance: Create or select a GKE cluster before deployment.
+  images:
+    "":
+      properties:
+        image.repository:
+          type: REPO_WITH_REGISTRY
+        image.tag:
+          type: TAG
+    ubbagent:
+      properties:
+        billing.ubbagent.image.repository:
+          type: REPO_WITH_REGISTRY
+        billing.ubbagent.image.tag:
+          type: TAG
+    tester:
+      properties:
+        apptest.image.repository:
+          type: REPO_WITH_REGISTRY
+        apptest.image.tag:
+          type: TAG
+
+properties:
+  name:
+    type: string
+    title: Application name
+    x-google-marketplace:
+      type: NAME
+
+  namespace:
+    type: string
+    title: Kubernetes namespace
+    x-google-marketplace:
+      type: NAMESPACE
+
+  config.executionMode:
+    type: string
+    title: Execution route
+    enum:
+      - standalone
+      - addon
+    default: standalone
+
+  config.projectId:
+    type: string
+    title: Project ID
+    default: ipfto_demo
+
+  config.runId:
+    type: string
+    title: Core run ID
+    description: Required when config.executionMode=addon.
+    default: ""
+
+  config.ipftoMode:
+    type: string
+    title: Add-on execution mode
+    enum:
+      - phase2a_only
+      - full
+    default: full
+
+  standalone.requestJson:
+    type: string
+    title: Standalone request JSON
+    description: Required when config.executionMode=standalone. Must be a real IPFTOOnlyAnalysisRequest payload.
+    default: ""
+
+  config.evidenceOnly:
+    type: boolean
+    title: Use evidence-only prior-art path
+    default: true
+
+  config.searchProviders:
+    type: string
+    title: Official prior-art providers
+    default: ""
+
+  storage.type:
+    type: string
+    title: Storage type
+    enum:
+      - pvc
+      - gcs
+    default: pvc
+
+  storage.pvc.size:
+    type: string
+    title: PVC size
+    default: 30Gi
+
+  storage.pvc.storageClassName:
+    type: string
+    title: PVC StorageClass
+    default: standard
+
+  storage.gcs.bucket:
+    type: string
+    title: GCS bucket
+    default: ""
+
+  entitlement.existingSecret:
+    type: string
+    title: Entitlement bearer-token secret
+    description: Optional Secret name containing the entitlement bearer token.
+    default: ""
+
+  llm.existingSecret:
+    type: string
+    title: Full-mode LLM credential secret
+    description: Optional Secret containing one or more standard LLM credential keys for config.ipftoMode=full.
+    default: ""
+
+  job.enabled:
+    type: boolean
+    title: Launch IP/FTO runtime job
+    description: Set true only when the required real standalone request or core run inputs are configured.
+    default: false
+
+  apptest.enabled:
+    type: boolean
+    title: Enable Marketplace verification tester
+    description: Internal Marketplace verification overlay only.
+    default: false
+
+required:
+  - name
+  - namespace

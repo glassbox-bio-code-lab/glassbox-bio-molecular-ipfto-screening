@@ -1,0 +1,249 @@
+{{- if .Values.job.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "glassbox-ipfto-screening.fullname" . | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "glassbox-ipfto-screening.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  activeDeadlineSeconds: {{ .Values.job.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "glassbox-ipfto-screening.selectorLabels" . | nindent 8 }}
+      {{- if eq .Values.storage.type "gcs" }}
+      annotations:
+        gke-gcsfuse/volumes: "true"
+      {{- end }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "glassbox-ipfto-screening.serviceAccountName" . | quote }}
+      initContainers:
+        - name: init-volume-perms
+          image: alpine:3.20
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          env:
+            - name: DATA_MOUNT
+              value: {{ include "glassbox-ipfto-screening.dataMountPath" . | quote }}
+            - name: PROJECTS_ROOT
+              value: {{ .Values.config.projectsRoot | quote }}
+            - name: INPUT_ROOT
+              value: {{ .Values.config.inputRoot | quote }}
+            - name: OUTPUT_ROOT
+              value: {{ .Values.config.outputRoot | quote }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -eu
+              mkdir -p "${DATA_MOUNT}" "${PROJECTS_ROOT}" "${INPUT_ROOT}" "${OUTPUT_ROOT}"
+              chmod -R a+rwX "${DATA_MOUNT}" "${PROJECTS_ROOT}" "${INPUT_ROOT}" "${OUTPUT_ROOT}" || true
+          volumeMounts:
+            - name: ipfto-data
+              mountPath: {{ include "glassbox-ipfto-screening.dataMountPath" . }}
+      containers:
+        - name: glassbox-ipfto
+          image: {{ include "glassbox-ipfto-screening.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: {{ include "glassbox-ipfto-screening.fullname" . }}-config
+          {{- if or .Values.entitlement.existingSecret .Values.llm.existingSecret .Values.billing.enabled }}
+          env:
+            {{- if .Values.billing.enabled }}
+            - name: UBB_REPORTING_ENABLED
+              value: "true"
+            - name: UBB_AGENT_HOST
+              value: "127.0.0.1"
+            - name: UBB_AGENT_PORT
+              value: {{ .Values.billing.ubbagent.localPort | quote }}
+            - name: MARKETPLACE_REPORTING_SECRET
+              value: {{ .Values.billing.marketplaceReportingSecret | quote }}
+            - name: MARKETPLACE_ENTITLEMENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.billing.marketplaceReportingSecret | quote }}
+                  key: entitlement-id
+            - name: MARKETPLACE_CONSUMER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.billing.marketplaceReportingSecret | quote }}
+                  key: consumer-id
+            {{- end }}
+            {{- if .Values.entitlement.existingSecret }}
+            - name: GBX_ENTITLEMENT_BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.entitlement.existingSecret | quote }}
+                  key: {{ .Values.entitlement.bearerTokenKey | quote }}
+            {{- end }}
+            {{- if .Values.llm.existingSecret }}
+            {{- range .Values.llm.secretKeys }}
+            - name: {{ .name | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.llm.existingSecret | quote }}
+                  key: {{ .key | quote }}
+                  optional: true
+            {{- end }}
+            {{- end }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -eu
+              if [ "${UBB_REPORTING_ENABLED:-false}" = "true" ]; then
+                if [ "${EXECUTION_MODE}" = "standalone" ]; then
+                  UBB_METRIC_NAME="${UBB_METRIC_NAME_STANDALONE}"
+                else
+                  UBB_METRIC_NAME="${UBB_METRIC_NAME_INTEGRATED}"
+                fi
+                export UBB_METRIC_NAME
+                python - <<'PY'
+              import json
+              import os
+              import socket
+              import time
+              import urllib.request
+
+              metric = os.environ["UBB_METRIC_NAME"]
+              host = os.environ.get("UBB_AGENT_HOST", "127.0.0.1")
+              port = int(os.environ.get("UBB_AGENT_PORT", "4567"))
+              deadline = time.time() + 30
+
+              while True:
+                  try:
+                      with socket.create_connection((host, port), timeout=2):
+                          break
+                  except Exception:
+                      if time.time() > deadline:
+                          raise SystemExit("ubbagent not ready")
+                      time.sleep(1)
+
+              stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+              payload = {
+                  "name": metric,
+                  "startTime": stamp,
+                  "endTime": stamp,
+                  "value": {"int64Value": 1},
+              }
+              body = json.dumps(payload).encode("utf-8")
+              req = urllib.request.Request(
+                  f"http://{host}:{port}/report",
+                  data=body,
+                  headers={"Content-Type": "application/json"},
+              )
+              with urllib.request.urlopen(req, timeout=10) as resp:
+                  if not (200 <= resp.status < 300):
+                      raise SystemExit(f"usage reporting returned status {resp.status}")
+              print("[glassbox-ipfto] usage reported")
+              PY
+              fi
+              REQUEST_JSON_PATH="/config/request.json"
+              if [ "${EXECUTION_MODE}" = "standalone" ]; then
+                test -f "${REQUEST_JSON_PATH}"
+                CMD="python -m ipfto_module --pretty ipfto-only --input-json ${REQUEST_JSON_PATH} --base-dir ${TN_PROJECTS_DIR} --topk ${IPFTO_TOPK} --max-per-source ${IPFTO_MAX_PER_SOURCE} --max-results ${IPFTO_MAX_RESULTS}"
+                if [ "${IPFTO_MAKE_PDF}" = "true" ]; then
+                  CMD="${CMD} --make-pdf"
+                fi
+                if [ -n "${IPFTO_SEARCH_PROVIDERS}" ]; then
+                  CMD="${CMD} --search-providers ${IPFTO_SEARCH_PROVIDERS}"
+                fi
+                if [ "${IPFTO_EVIDENCE_ONLY}" != "true" ]; then
+                  CMD="${CMD} --no-evidence-only"
+                fi
+                echo "[glassbox-ipfto] mode=standalone project=${PROJECT_ID}"
+                exec /bin/sh -c "${CMD}" 2>&1
+              fi
+
+              echo "[glassbox-ipfto] mode=addon project=${PROJECT_ID} run=${RUN_ID} ipftoMode=${GBX_IPFTO_MODE}"
+              exec python -m ipfto_module.addon_runner \
+                --project-id "${PROJECT_ID}" \
+                --run-id "${RUN_ID}" \
+                --output-root "${GBX_OUTPUT_ROOT}" \
+                --mode "${GBX_IPFTO_MODE}" 2>&1
+          volumeMounts:
+            - name: ipfto-data
+              mountPath: {{ include "glassbox-ipfto-screening.dataMountPath" . }}
+            - name: ipfto-config
+              mountPath: /config/request.json
+              subPath: request.json
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.billing.enabled }}
+        - name: ubbagent
+          image: {{ include "glassbox-ipfto-screening.ubbagentImage" . | quote }}
+          imagePullPolicy: {{ .Values.billing.ubbagent.image.pullPolicy }}
+          env:
+            - name: MARKETPLACE_CONSUMER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.billing.marketplaceReportingSecret | quote }}
+                  key: consumer-id
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -eu
+              export MARKETPLACE_REPORTING_KEY_B64="$(base64 /var/marketplace/reporting-key | tr -d '\n')"
+              envsubst < /etc/ubbagent/config.yaml > /tmp/ubbagent-config.yaml
+              exec ubbagent --config /tmp/ubbagent-config.yaml --state-dir /var/ubbagent/state --local-port {{ .Values.billing.ubbagent.localPort }} -logtostderr -v 2
+          volumeMounts:
+            - name: ubbagent-config
+              mountPath: /etc/ubbagent/config.yaml
+              subPath: config.yaml
+            - name: ubbagent-state
+              mountPath: /var/ubbagent/state
+            - name: marketplace-reporting
+              mountPath: /var/marketplace
+              readOnly: true
+        {{- end }}
+      volumes:
+        - name: ipfto-config
+          configMap:
+            name: {{ include "glassbox-ipfto-screening.fullname" . }}-config
+        - name: ipfto-data
+          {{- if eq .Values.storage.type "pvc" }}
+          persistentVolumeClaim:
+            claimName: {{ include "glassbox-ipfto-screening.fullname" . }}-data
+          {{- else }}
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
+            volumeAttributes:
+              bucketName: {{ .Values.storage.gcs.bucket | quote }}
+              implicitDirs: "true"
+              mountOptions: "implicit-dirs"
+          {{- end }}
+        {{- if .Values.billing.enabled }}
+        - name: ubbagent-config
+          configMap:
+            name: {{ printf "%s-ubbagent" (include "glassbox-ipfto-screening.fullname" .) | quote }}
+        - name: ubbagent-state
+          emptyDir: {}
+        - name: marketplace-reporting
+          secret:
+            secretName: {{ .Values.billing.marketplaceReportingSecret | quote }}
+        {{- end }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+{{- end }}

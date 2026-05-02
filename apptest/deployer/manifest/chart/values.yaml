@@ -1,0 +1,25 @@
+job:
+  enabled: false
+
+billing:
+  enabled: false
+
+apptest:
+  enabled: true
+
+config:
+  executionMode: standalone
+  projectId: verification_project
+  ipftoMode: phase2a_only
+  failClosed: true
+  entitlementUrl: ""
+  entitlementAudience: ""
+
+standalone:
+  requestJson: ""
+
+storage:
+  type: pvc
+  pvc:
+    storageClassName: ""
+    size: 30Gi

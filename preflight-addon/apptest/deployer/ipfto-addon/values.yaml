@@ -1,0 +1,8 @@
+apptest:
+  enabled: true
+
+application:
+  enabled: true
+
+serviceAccount:
+  create: true

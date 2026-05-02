@@ -1,0 +1,6 @@
+apiVersion: v2
+name: glassbox-ipfto-screening
+description: Glassbox Bio IP/FTO customer runtime for standalone and add-on execution.
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

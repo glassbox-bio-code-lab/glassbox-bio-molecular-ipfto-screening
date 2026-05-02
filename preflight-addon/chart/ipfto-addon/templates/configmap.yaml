@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.install.configMapName | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "glassbox-ipfto-addon.labels" . | nindent 4 }}
+    app.kubernetes.io/component: addon-ipfto
+data:
+  runnerImage: {{ include "glassbox-ipfto-addon.image" . | quote }}
+  supportedModes: {{ join "," .Values.install.supportedModes | quote }}
+  {{- $blockedModes := list -}}
+  {{- range $entry := .Values.install.blockedModes }}
+  {{- $mode := (($entry.mode | default "") | toString | trim) -}}
+  {{- if $mode }}
+  {{- $blockedModes = append $blockedModes $mode -}}
+  {{- end }}
+  {{- end }}
+  blockedModes: {{ join "," $blockedModes | quote }}
+  projectsDir: {{ .Values.install.projectsDir | quote }}
+  outputRoot: {{ .Values.install.outputRoot | quote }}
+  inputRoot: {{ .Values.install.inputRoot | quote }}
+  GBX_IPFTO_PROJECTS_DIR: {{ .Values.install.projectsDir | quote }}
+  GBX_OUTPUT_ROOT: {{ .Values.install.outputRoot | quote }}
+  GBX_INPUT_ROOT: {{ .Values.install.inputRoot | quote }}
+  GBX_ENTITLEMENT_URL: {{ .Values.configData.GBX_ENTITLEMENT_URL | quote }}
+  GBX_ENTITLEMENT_AUDIENCE: {{ .Values.configData.GBX_ENTITLEMENT_AUDIENCE | quote }}
+  GBX_MARKETPLACE_METADATA_JSON: {{ .Values.configData.GBX_MARKETPLACE_METADATA_JSON | quote }}
+  secretRefs: {{ .Values.configData.secretRefs | toJson | quote }}
+  {{- range $entry := .Values.install.blockedModes }}
+  {{ printf "%sReason" ($entry.mode | toString) }}: {{ ($entry.message | default "") | quote }}
+  {{- end }}

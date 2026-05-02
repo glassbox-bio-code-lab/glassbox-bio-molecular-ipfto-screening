@@ -1,0 +1,15 @@
+{
+  "project_name": "BCR-ABL1 inhibitor FTO screen",
+  "applicant_or_company_name": "Example Therapeutics",
+  "invention_description": "Novel ABL1 inhibitor for Philadelphia chromosome-positive chronic myeloid leukemia.",
+  "primary_target": "ABL1",
+  "indication": "Chronic myeloid leukemia, Philadelphia chromosome-positive",
+  "modality": "small_molecule",
+  "jurisdiction_scope": ["US", "EP", "WO"],
+  "key_synonyms": ["ABL1", "Tyrosine-protein kinase ABL1", "BCR-ABL1"],
+  "claims_focus": ["composition_of_matter", "method_of_use"],
+  "known_compounds_or_assets": [],
+  "must_include_terms": [],
+  "must_exclude_terms": [],
+  "additional_instructions": "Focus on issued US composition-of-matter patents first."
+}

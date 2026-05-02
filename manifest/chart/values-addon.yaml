@@ -1,0 +1,7 @@
+config:
+  executionMode: addon
+  ipftoMode: phase2a_only
+standalone:
+  requestJson: ""
+job:
+  enabled: true

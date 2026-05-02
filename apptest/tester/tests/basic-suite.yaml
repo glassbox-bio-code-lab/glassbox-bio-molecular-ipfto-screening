@@ -1,0 +1,43 @@
+actions:
+  - name: ServiceAccount exists
+    bashTest:
+      script: |
+        set -euo pipefail
+        kubectl -n "${NAMESPACE}" get serviceaccount "${APP_SERVICE_ACCOUNT}" >/dev/null
+
+  - name: ConfigMap exposes IPFTO runtime contract
+    bashTest:
+      script: |
+        set -euo pipefail
+        config_json="$(kubectl -n "${NAMESPACE}" get configmap "${APP_CONFIGMAP}" -o json)"
+        printf '%s' "${config_json}" | jq -e --arg project "${APP_PROJECT_ID}" '.data.PROJECT_ID == $project' >/dev/null
+        printf '%s' "${config_json}" | jq -e '.data.EXECUTION_MODE == "standalone"' >/dev/null
+        printf '%s' "${config_json}" | jq -e '.data.GBX_IPFTO_MODE == "phase2a_only"' >/dev/null
+        printf '%s' "${config_json}" | jq -e '.data.FAIL_CLOSED == "true"' >/dev/null
+        printf '%s' "${config_json}" | jq -e '.data.UBBAGENT_ENABLED == "false"' >/dev/null
+
+  - name: Runtime Job is disabled for verification install
+    bashTest:
+      script: |
+        set -euo pipefail
+        if kubectl -n "${NAMESPACE}" get job "${APP_INSTANCE_NAME}" >/dev/null 2>&1; then
+          echo "Verification install must not launch the IP/FTO runtime job without real inputs." >&2
+          exit 1
+        fi
+
+  - name: PVC exists for customer data mount
+    bashTest:
+      script: |
+        set -euo pipefail
+        kubectl -n "${NAMESPACE}" get pvc "${APP_PVC_NAME}" >/dev/null
+
+  - name: Tester sees Marketplace image wiring
+    bashTest:
+      script: |
+        set -euo pipefail
+        test -n "${APP_RUNTIME_IMAGE}"
+        test -n "${APP_TESTER_IMAGE}"
+        case "${APP_RUNTIME_IMAGE}" in
+          us-docker.pkg.dev/*/glassbox-ipfto*) ;;
+          *) echo "Unexpected IP/FTO runtime image: ${APP_RUNTIME_IMAGE}" >&2; exit 1 ;;
+        esac

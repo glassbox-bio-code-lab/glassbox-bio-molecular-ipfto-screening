@@ -1,0 +1,5 @@
+config:
+  executionMode: standalone
+  ipftoMode: phase2a_only
+job:
+  enabled: true

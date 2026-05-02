@@ -1,0 +1,53 @@
+{{- if and (eq .Values.storage.type "gcs") (not (.Values.storage.gcs.bucket | trim)) }}
+{{- fail "Set storage.gcs.bucket when storage.type=gcs." }}
+{{- end }}
+{{- if and .Values.billing.enabled (not (.Values.billing.marketplaceReportingSecret | trim)) }}
+{{- fail "Set billing.marketplaceReportingSecret when billing.enabled=true." }}
+{{- end }}
+{{- if and .Values.billing.enabled (not (.Values.billing.ubbagent.serviceName | trim)) }}
+{{- fail "Set billing.ubbagent.serviceName when billing.enabled=true." }}
+{{- end }}
+{{- if not (has .Values.config.executionMode (list "standalone" "addon")) }}
+{{- fail "config.executionMode must be one of: standalone, addon." }}
+{{- end }}
+{{- if and .Values.job.enabled (eq .Values.config.executionMode "standalone") (not (.Values.standalone.requestJson | trim)) }}
+{{- fail "standalone.requestJson is required when job.enabled=true and config.executionMode=standalone." }}
+{{- end }}
+{{- if and .Values.job.enabled (eq .Values.config.executionMode "addon") (not (.Values.config.runId | trim)) }}
+{{- fail "config.runId is required when job.enabled=true and config.executionMode=addon." }}
+{{- end }}
+{{- if and (eq .Values.config.executionMode "addon") (not (has .Values.config.ipftoMode (list "phase2a_only" "full"))) }}
+{{- fail "config.ipftoMode must be one of: phase2a_only, full." }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "glassbox-ipfto-screening.fullname" . }}-config
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "glassbox-ipfto-screening.labels" . | nindent 4 }}
+data:
+  EXECUTION_MODE: {{ .Values.config.executionMode | quote }}
+  PROJECT_ID: {{ .Values.config.projectId | quote }}
+  RUN_ID: {{ .Values.config.runId | quote }}
+  FAIL_CLOSED: {{ .Values.config.failClosed | quote }}
+  IPFTO_TOPK: {{ .Values.config.topk | quote }}
+  IPFTO_MAX_PER_SOURCE: {{ .Values.config.maxPerSource | quote }}
+  IPFTO_MAX_RESULTS: {{ .Values.config.maxResults | quote }}
+  IPFTO_MAKE_PDF: {{ .Values.config.makePdf | quote }}
+  IPFTO_EVIDENCE_ONLY: {{ .Values.config.evidenceOnly | quote }}
+  IPFTO_SEARCH_PROVIDERS: {{ .Values.config.searchProviders | quote }}
+  GBX_IPFTO_MODE: {{ .Values.config.ipftoMode | quote }}
+  GBX_INPUT_ROOT: {{ .Values.config.inputRoot | quote }}
+  GBX_OUTPUT_ROOT: {{ .Values.config.outputRoot | quote }}
+  GBX_IPFTO_PROJECTS_DIR: {{ .Values.config.projectsRoot | quote }}
+  TN_PROJECTS_DIR: {{ .Values.config.projectsRoot | quote }}
+  GBX_ENTITLEMENT_URL: {{ .Values.config.entitlementUrl | quote }}
+  GBX_ENTITLEMENT_AUDIENCE: {{ .Values.config.entitlementAudience | quote }}
+  GBX_MARKETPLACE_METADATA_JSON: {{ .Values.config.marketplaceMetadataJson | quote }}
+  UBBAGENT_ENABLED: {{ ternary "true" "false" .Values.billing.enabled | quote }}
+  UBBAGENT_LOCAL_PORT: {{ .Values.billing.ubbagent.localPort | quote }}
+  UBB_METRIC_NAME_STANDALONE: {{ .Values.billing.ubbagent.metricNameStandalone | quote }}
+  UBB_METRIC_NAME_INTEGRATED: {{ .Values.billing.ubbagent.metricNameIntegrated | quote }}
+  request.json: |
+{{ .Values.standalone.requestJson | default "{}" | nindent 4 }}

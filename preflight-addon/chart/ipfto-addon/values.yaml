@@ -1,0 +1,49 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
+  tag: "1.0.0"
+  digest: ""
+  pullPolicy: IfNotPresent
+
+install:
+  serviceAccountName: gbx-ipfto-runner
+  configMapName: gbx-ipfto-addon
+  projectsDir: /data/projects
+  outputRoot: /data/output
+  inputRoot: /data/input
+  supportedModes:
+    - phase2a_only
+    - full
+  blockedModes: []
+  serviceAccountAnnotations: {}
+
+configData:
+  GBX_ENTITLEMENT_URL: ""
+  GBX_ENTITLEMENT_AUDIENCE: ""
+  GBX_MARKETPLACE_METADATA_JSON: ""
+  # Full mode requires one of OPENAI_API_KEY, OPENROUTER_API_KEY,
+  # ANTHROPIC_API_KEY, GEMINI_API_KEY, or GOOGLE_API_KEY from a real Secret.
+  secretRefs: []
+
+serviceAccount:
+  create: true
+
+application:
+  enabled: true
+
+apptest:
+  enabled: false
+  image:
+    repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/preflight-addon-tester
+    tag: "1.0.0"
+    digest: ""
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 128Mi
+    limits:
+      cpu: "250m"
+      memory: 256Mi

@@ -1,0 +1,119 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
+  tag: "1.0.0"
+  digest: ""
+  pullPolicy: IfNotPresent
+
+config:
+  executionMode: standalone
+  projectId: ipfto_demo
+  runId: ""
+  ipftoMode: phase2a_only
+  failClosed: true
+
+  topk: 30
+  maxPerSource: 30
+  maxResults: 25
+  makePdf: false
+  evidenceOnly: true
+  searchProviders: ""
+
+  inputRoot: /data/input
+  outputRoot: /data/output
+  projectsRoot: /data/projects
+
+  entitlementUrl: ""
+  entitlementAudience: ""
+  marketplaceMetadataJson: ""
+
+standalone:
+  requestJson: ""
+
+entitlement:
+  existingSecret: ""
+  bearerTokenKey: entitlement-token
+
+billing:
+  enabled: false
+  marketplaceReportingSecret: ""
+  ubbagent:
+    image:
+      repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent
+      tag: "1.0.0"
+      digest: ""
+      pullPolicy: IfNotPresent
+    localPort: "4567"
+    serviceName: services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
+    metricNameStandalone: ipfto_standalone_run
+    metricNameIntegrated: ipfto_integrated_run
+
+llm:
+  existingSecret: ""
+  secretKeys:
+    - name: OPENAI_API_KEY
+      key: OPENAI_API_KEY
+    - name: OPENROUTER_API_KEY
+      key: OPENROUTER_API_KEY
+    - name: ANTHROPIC_API_KEY
+      key: ANTHROPIC_API_KEY
+    - name: GEMINI_API_KEY
+      key: GEMINI_API_KEY
+    - name: GOOGLE_API_KEY
+      key: GOOGLE_API_KEY
+
+storage:
+  type: pvc
+  pvc:
+    storageClassName: standard
+    size: 30Gi
+  gcs:
+    bucket: ""
+    mountPath: /data
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+workloadIdentity:
+  enabled: false
+  gcpServiceAccount: ""
+
+job:
+  enabled: false
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  activeDeadlineSeconds: 21600
+
+resources:
+  requests:
+    cpu: "2"
+    memory: 8Gi
+  limits:
+    cpu: "4"
+    memory: 16Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+application:
+  enabled: true
+
+apptest:
+  enabled: false
+  image:
+    repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester
+    tag: "1.0.0"
+    digest: ""
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 128Mi
+    limits:
+      cpu: "250m"
+      memory: 256Mi

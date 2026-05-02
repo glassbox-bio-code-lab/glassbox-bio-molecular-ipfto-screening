@@ -1,0 +1,70 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: Initial customer-facing add-on resource bundle for IP/FTO preflight integration.
+    releaseTypes:
+      - Feature
+    recommended: true
+  images:
+    "":
+      properties:
+        image.repository:
+          type: REPO_WITH_REGISTRY
+        image.tag:
+          type: TAG
+    tester:
+      properties:
+        apptest.image.repository:
+          type: REPO_WITH_REGISTRY
+        apptest.image.tag:
+          type: TAG
+
+properties:
+  name:
+    type: string
+    title: Application name
+    x-google-marketplace:
+      type: NAME
+
+  namespace:
+    type: string
+    title: Kubernetes namespace
+    x-google-marketplace:
+      type: NAMESPACE
+
+  install.serviceAccountName:
+    type: string
+    title: Runner service account name
+    default: gbx-ipfto-runner
+
+  install.configMapName:
+    type: string
+    title: Add-on config map name
+    default: gbx-ipfto-addon
+
+  install.projectsDir:
+    type: string
+    title: Persistent projects workspace root
+    default: /data/projects
+
+  install.outputRoot:
+    type: string
+    title: Shared output root
+    default: /data/output
+
+  install.inputRoot:
+    type: string
+    title: Shared input root
+    default: /data/input
+
+  apptest.enabled:
+    type: boolean
+    title: Enable Marketplace verification tester
+    description: Internal Marketplace verification overlay only.
+    default: false
+
+required:
+  - name
+  - namespace

@@ -1,0 +1,46 @@
+{{- if .Values.apptest.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "glassbox-ipfto-screening.fullname" . }}-tester
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    marketplace.cloud.google.com/verification: "test"
+  labels:
+    {{- include "glassbox-ipfto-screening.labels" . | nindent 4 }}
+spec:
+  restartPolicy: Never
+  serviceAccountName: {{ include "glassbox-ipfto-screening.serviceAccountName" . | quote }}
+  containers:
+    - name: tester
+      {{- if .Values.apptest.image.digest }}
+      image: "{{ .Values.apptest.image.repository }}@{{ .Values.apptest.image.digest }}"
+      {{- else }}
+      image: "{{ .Values.apptest.image.repository }}:{{ .Values.apptest.image.tag }}"
+      {{- end }}
+      imagePullPolicy: {{ .Values.apptest.image.pullPolicy }}
+      env:
+        - name: APP_INSTANCE_NAME
+          value: {{ include "glassbox-ipfto-screening.fullname" . | quote }}
+        - name: NAMESPACE
+          value: {{ .Release.Namespace | quote }}
+        - name: APP_CONFIGMAP
+          value: {{ printf "%s-config" (include "glassbox-ipfto-screening.fullname" .) | quote }}
+        - name: APP_SERVICE_ACCOUNT
+          value: {{ include "glassbox-ipfto-screening.serviceAccountName" . | quote }}
+        - name: APP_PVC_NAME
+          value: {{ printf "%s-data" (include "glassbox-ipfto-screening.fullname" .) | quote }}
+        - name: APP_PROJECT_ID
+          value: {{ .Values.config.projectId | quote }}
+        - name: APP_RUNTIME_IMAGE
+          value: {{ include "glassbox-ipfto-screening.image" . | quote }}
+        {{- if .Values.apptest.image.digest }}
+        - name: APP_TESTER_IMAGE
+          value: "{{ .Values.apptest.image.repository }}@{{ .Values.apptest.image.digest }}"
+        {{- else }}
+        - name: APP_TESTER_IMAGE
+          value: "{{ .Values.apptest.image.repository }}:{{ .Values.apptest.image.tag }}"
+        {{- end }}
+      resources:
+        {{- toYaml .Values.apptest.resources | nindent 8 }}
+{{- end }}

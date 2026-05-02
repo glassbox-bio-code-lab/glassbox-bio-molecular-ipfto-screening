@@ -1,0 +1,30 @@
+{{- if .Values.application.enabled }}
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ include "glassbox-ipfto-addon.fullname" . | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "glassbox-ipfto-addon.labels" . | nindent 4 }}
+spec:
+  descriptor:
+    type: glassbox-ipfto-addon
+    version: {{ .Chart.AppVersion | quote }}
+    description: Install-time add-on resources for exposing IP/FTO in an existing Preflight deployment.
+    maintainers:
+      - name: Glassbox Bio
+    keywords:
+      - ipfto
+      - preflight
+      - addon
+      - patent landscape
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  addOwnerRef: true
+  componentKinds:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: ServiceAccount
+{{- end }}

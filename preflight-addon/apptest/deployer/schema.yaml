@@ -1,0 +1,42 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  images:
+    "":
+      properties:
+        image.repository:
+          type: REPO_WITH_REGISTRY
+        image.tag:
+          type: TAG
+    tester:
+      properties:
+        apptest.image.repository:
+          type: REPO_WITH_REGISTRY
+        apptest.image.tag:
+          type: TAG
+
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+    default: glassbox-ipfto-addon-test
+
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+    default: glassbox-ipfto-addon-test
+
+  install.serviceAccountName:
+    type: string
+    default: gbx-ipfto-runner
+
+  install.configMapName:
+    type: string
+    default: gbx-ipfto-addon
+
+required:
+  - name
+  - namespace

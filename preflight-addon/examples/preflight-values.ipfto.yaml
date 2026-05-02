@@ -1,0 +1,77 @@
+addons:
+  registry:
+    - id: ipfto
+      title: Molecular IP / Freedom-to-Operate Screening
+      tagline: Evidence-linked IP/FTO screening against an existing Glassbox core run
+      description: Runs the canonical IP/FTO add-on as a Kubernetes Job and writes append-only outputs under raw/ipfto/ and reports/.
+      accessTier: customer-addon
+      outputsPrefix: reports
+      quickLinks:
+        - path: reports/combined_unified_ipfto_outputs.json
+          label: Unified IP/FTO Outputs (JSON)
+        - path: reports/ipfto_report.html
+          label: IP/FTO Report
+          openInNewTab: true
+        - path: reports/ipfto_manifest.json
+          label: IP/FTO Manifest (JSON)
+      startEndpoint: /api/addons/ipfto/run
+      startLabel: Run IP/FTO
+      requireRunId: true
+      parametersSchema:
+        type: object
+        title: IP/FTO add-on execution
+        properties:
+          executionMode:
+            type: string
+            title: Execution mode
+            enum:
+              - phase2a_only
+              - full
+            default: full
+          additionalInstructions:
+            type: string
+            title: Additional instructions
+            description: Optional analyst notes. The runtime remains bound to real core outputs and evidence.
+        required:
+          - executionMode
+      prereq:
+        requiredFiles:
+          - results/combined_unified_computational_outputs.json
+          - results/summary.json
+      runner:
+        command:
+          - /bin/sh
+          - -lc
+          - >
+            python -m ipfto_module.addon_runner
+            --project-id "${PROJECT_ID}"
+            --run-id "${RUN_ID}"
+            --output-root "${GBX_OUTPUT_ROOT}"
+            --mode "${GBX_IPFTO_MODE}"
+        env:
+          - name: GBX_IPFTO_MODE
+            value: "{executionMode}"
+      install:
+        serviceAccountName: gbx-ipfto-runner
+        configMapName: gbx-ipfto-addon
+        runnerImageKey: runnerImage
+        readyModes:
+          - phase2a_only
+          - full
+        requiredConfig:
+          - GBX_IPFTO_PROJECTS_DIR
+          - GBX_INPUT_ROOT
+          - GBX_OUTPUT_ROOT
+          - LLM_PROVIDER
+          - LLM_MODEL
+          - LLM_BASE_URL
+  installations:
+    ipfto:
+      enabled: true
+      configData:
+        GBX_IPFTO_PROJECTS_DIR: /data/projects
+        GBX_INPUT_ROOT: /data/input
+        GBX_OUTPUT_ROOT: /data/output
+        LLM_PROVIDER: openrouter
+        LLM_MODEL: openrouter/openai/gpt-5.4
+        LLM_BASE_URL: https://openrouter.ai/api/v1
