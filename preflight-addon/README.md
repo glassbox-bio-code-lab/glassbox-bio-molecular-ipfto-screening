@@ -2,7 +2,7 @@
 
 Nested Preflight integration package for the Glassbox Bio Molecular IPFTO Screening product.
 
-This directory belongs to the same product package as the parent `glassbox-ipfto-screening-gke` bundle. It exists separately inside the repo because Marketplace validation needs a deployer/tester surface for the Preflight add-on resources, but it is not a separate product.
+This directory belongs to the same product package as the parent `glassbox-bio-molecular-ipfto-screening` bundle. It exists separately inside the repo because Marketplace validation needs a deployer/tester surface for the Preflight add-on resources, but it is not a separate product.
 
 This bundle does not ship the Preflight UI itself. Instead, it provides:
 
