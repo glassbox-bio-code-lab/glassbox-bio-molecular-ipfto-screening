@@ -4,7 +4,7 @@ Evidence-linked molecular IP and freedom-to-operate screening for customer-hoste
 
 Glassbox Bio Molecular IP/FTO Screening helps small-molecule biotech and pharmaceutical teams review target- and chemistry-specific patent evidence, identify potentially relevant patent families, and surface freedom-to-operate considerations for internal scientific, strategic, and diligence review. It is designed for screening and decision support only. It is not a substitute for formal legal advice, legal opinion, or counsel review.
 
-This repository is the customer-facing GKE and Marketplace deployment package. It does not build internal source images or publish to Artifact Registry; those steps are handled by the internal release pipeline. The package deploys the published runtime image and the Marketplace deployer, tester, add-on, and usage-reporting surfaces needed in customer environments.
+This repository is the customer-facing GKE and Marketplace deployment package. The package deploys the runtime image and the Kubernetes resources needed for customer-hosted execution.
 
 ## Deployment Surfaces
 
@@ -115,47 +115,18 @@ The IP/FTO chart includes a UBB agent sidecar configuration for Marketplace usag
 - `ipfto_integrated_run`: IP/FTO add-on run attached to an existing Glassbox core run.
 - `ipfto_standalone_run`: standalone IP/FTO run.
 
-The published IP/FTO UBB agent image is configured in:
+The IP/FTO UBB agent image is configured in:
 
 - `manifest/chart/values.yaml`
 
-Billing requires the customer deployment to provide the Marketplace reporting Secret expected by the chart. The repository stores deployment configuration and metric names; pricing is controlled by the Marketplace Producer Portal plan.
+Billing requires the customer deployment to provide the Marketplace reporting Secret expected by the chart. The repository stores deployment configuration and metric names; pricing is controlled by the Marketplace plan.
 
-## Runtime Images
+## Image Configuration
 
-Current production defaults use published Artifact Registry images:
+Image repositories, tags, and immutable digests are configured in the Helm values files:
 
-- Runtime: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto:1.0.0`
-- UBB agent: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent:1.0.0`
-- Deployer: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer:1.0.0`
-- Tester: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/tester:1.0.0`
-
-Current pinned digests in the chart values are:
-
-- Runtime: `sha256:47151fff378c4bc7108477a4838a069820a6ae84415999a8d34c9304da626435`
-- UBB agent: `sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293`
-- Deployer: `sha256:4b5fd83b16c4dbada575395a20476c422b1f7491693f015782e62fa01e9ddaf0`
-- Tester: `sha256:3064125bbdd670a9cbe907dc3e01343cc72c9ff1a2eed130ee3213f9fd2395d1`
-- Preflight add-on tester: `sha256:65673015fe43806dea41ef12eb8fd8ea3c95cbda1692fcc827492abc32078594`
-
-For Marketplace submission, use this deployer image URL without a tag or digest:
-
-```text
-us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
-```
-
-The direct deployer and nested Preflight add-on deployer/tester images are built and published by the release pipeline using the Dockerfiles in this package.
-
-## Marketplace Image Build Helpers
-
-These helpers are for release maintainers, not customer scientific execution:
-
-```bash
-make -C glassbox-bio-molecular-ipfto-screening build-marketplace-images
-make -C glassbox-bio-molecular-ipfto-screening push-marketplace-images
-make -C glassbox-bio-molecular-ipfto-screening preflight-build-marketplace-images
-make -C glassbox-bio-molecular-ipfto-screening preflight-push-marketplace-images
-```
+- `manifest/chart/values.yaml`
+- `preflight-addon/chart/ipfto-addon/values.yaml`
 
 The verification tester validates Kubernetes install wiring only. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
 
