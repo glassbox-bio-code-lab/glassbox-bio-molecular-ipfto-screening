@@ -4,7 +4,7 @@ fullnameOverride: ""
 image:
   repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
   tag: "1.0.0"
-  digest: "sha256:47151fff378c4bc7108477a4838a069820a6ae84415999a8d34c9304da626435"
+  digest: "sha256:d3f10335f2c07dfd76c851dfb404eb362cbe6fc67c7cd870b1f516ce2a4a2ef6"
   pullPolicy: IfNotPresent
 
 install:
