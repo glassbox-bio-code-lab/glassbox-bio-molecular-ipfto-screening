@@ -106,7 +106,7 @@ application:
 apptest:
   enabled: false
   image:
-    repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/tester
+    repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester
     tag: "1.0.0"
     digest: "sha256:3064125bbdd670a9cbe907dc3e01343cc72c9ff1a2eed130ee3213f9fd2395d1"
     pullPolicy: Always
