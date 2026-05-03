@@ -127,14 +127,22 @@ Current production defaults use published Artifact Registry images:
 
 - Runtime: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto:1.0.0`
 - UBB agent: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent:1.0.0`
-- Tester: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester:1.0.0`
+- Deployer: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer:1.0.0`
+- Tester: `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/tester:1.0.0`
 
 Current pinned digests in the chart values are:
 
 - Runtime: `sha256:47151fff378c4bc7108477a4838a069820a6ae84415999a8d34c9304da626435`
 - UBB agent: `sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293`
+- Deployer: `sha256:4b5fd83b16c4dbada575395a20476c422b1f7491693f015782e62fa01e9ddaf0`
 - Tester: `sha256:3064125bbdd670a9cbe907dc3e01343cc72c9ff1a2eed130ee3213f9fd2395d1`
 - Preflight add-on tester: `sha256:65673015fe43806dea41ef12eb8fd8ea3c95cbda1692fcc827492abc32078594`
+
+For Marketplace submission, use this deployer image URL without a tag or digest:
+
+```text
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
+```
 
 The direct deployer and nested Preflight add-on deployer/tester images are built and published by the release pipeline using the Dockerfiles in this package.
 

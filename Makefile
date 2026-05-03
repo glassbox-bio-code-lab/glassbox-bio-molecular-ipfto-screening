@@ -7,8 +7,9 @@ PYTHON ?= python3
 
 VERSION ?= 1.0.0
 PUBLIC_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
-DEPLOYER_IMAGE ?= $(PUBLIC_REPO)/deployer:$(VERSION)
-TESTER_IMAGE ?= $(PUBLIC_REPO)/tester:$(VERSION)
+PRODUCT_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening
+DEPLOYER_IMAGE ?= $(PRODUCT_REPO)/deployer:$(VERSION)
+TESTER_IMAGE ?= $(PRODUCT_REPO)/tester:$(VERSION)
 MP_SERVICE_NAME ?= services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
 .PHONY: help lint template template-apptest check-tester-python build-deployer build-tester build-marketplace-images push-marketplace-images preflight-lint preflight-template preflight-template-apptest preflight-check-tester-python preflight-build-marketplace-images preflight-push-marketplace-images validate-all
