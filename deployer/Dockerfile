@@ -71,9 +71,11 @@ COPY apptest/deployer/manifest/chart/values.yaml /tmp/marketplace-test/chart/val
 RUN tar -czf /data-test/chart/chart-bundle.tar.gz -C /tmp/marketplace-test chart \
     && rm -rf /tmp/marketplace-test
 COPY apptest/deployer/schema.yaml /data-test/schema.yaml
+COPY deployer/marketplace-debug-deploy.sh /usr/local/bin/marketplace-debug-deploy.sh
+RUN chmod 0755 /usr/local/bin/marketplace-debug-deploy.sh
 
 ENV SCHEMA=/data/schema.yaml
 ENV WAIT_FOR_READY_TIMEOUT=1800
 ENV TESTER_TIMEOUT=1800
 
-ENTRYPOINT ["/bin/bash", "/bin/deploy.sh"]
+ENTRYPOINT ["/usr/local/bin/marketplace-debug-deploy.sh"]
