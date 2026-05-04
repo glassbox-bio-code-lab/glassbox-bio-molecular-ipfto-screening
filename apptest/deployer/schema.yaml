@@ -3,19 +3,19 @@ x-google-marketplace:
   applicationApiVersion: v1beta1
   publishedVersion: "1.0.0"
   images:
-    "":
+    glassbox-ipfto:
       properties:
         image.repository:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
-    ubbagent:
+    glassbox-ipfto/ubbagent:
       properties:
         billing.ubbagent.image.repository:
           type: REPO_WITH_REGISTRY
         billing.ubbagent.image.tag:
           type: TAG
-    tester:
+    glassbox-ipfto/tester:
       properties:
         apptest.image.repository:
           type: REPO_WITH_REGISTRY
