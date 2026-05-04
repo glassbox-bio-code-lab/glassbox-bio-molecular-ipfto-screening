@@ -6,8 +6,9 @@ HELM ?= helm
 PYTHON ?= python3
 
 VERSION ?= 1.0.0
-PUBLIC_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
-DEPLOYER_IMAGE ?= $(PUBLIC_REPO)/deployer:$(VERSION)
+PRODUCT_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening
+PUBLIC_REPO ?= $(PRODUCT_REPO)/glassbox-ipfto
+DEPLOYER_IMAGE ?= $(PRODUCT_REPO)/deployer:$(VERSION)
 TESTER_IMAGE ?= $(PUBLIC_REPO)/tester:$(VERSION)
 MP_SERVICE_NAME ?= services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
