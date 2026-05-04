@@ -7,7 +7,7 @@ ARG KUBECTL_VERSION
 WORKDIR /src
 RUN curl -fsSLo kubernetes-src.tar.gz "https://github.com/kubernetes/kubernetes/archive/refs/tags/${KUBECTL_VERSION}.tar.gz" \
     && tar -xzf kubernetes-src.tar.gz --strip-components=1 \
-    && /usr/local/go/bin/go mod edit -require=golang.org/x/net@v0.38.0 -require=golang.org/x/oauth2@v0.27.0 \
+    && /usr/local/go/bin/go mod edit -require=golang.org/x/net@v0.38.0 -require=golang.org/x/oauth2@v0.27.0 -require=github.com/moby/spdystream@v0.5.1 \
     && /usr/local/go/bin/go work vendor \
     && PATH=/usr/local/go/bin:$PATH make kubectl KUBE_VERBOSE=0 \
     && install -D _output/local/go/bin/kubectl /out/kubectl

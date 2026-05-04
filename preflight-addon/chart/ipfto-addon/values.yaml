@@ -38,7 +38,7 @@ apptest:
   image:
     repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/preflight-addon-tester
     tag: "1.0.0"
-    digest: "sha256:517a6c16949fc944041997f76c9f93a625f9763cc71cbc71cd3c77be818c43d2"
+    digest: "sha256:b564e466c18f31ac3045def7198ab2488b716b131127a73a4fad35b5d87a94b4"
     pullPolicy: Always
   resources:
     requests:
