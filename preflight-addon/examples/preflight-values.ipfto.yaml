@@ -73,5 +73,5 @@ addons:
         GBX_INPUT_ROOT: /data/input
         GBX_OUTPUT_ROOT: /data/output
         LLM_PROVIDER: openrouter
-        LLM_MODEL: openrouter/openai/gpt-5.4
+        LLM_MODEL: openrouter/openai/gpt-5.5
         LLM_BASE_URL: https://openrouter.ai/api/v1
