@@ -1,4 +1,4 @@
-ARG GOLANG_BUILD_IMAGE=golang:1.25.8
+ARG GOLANG_BUILD_IMAGE=golang:1.25.9
 ARG KUBECTL_VERSION=v1.31.14
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
