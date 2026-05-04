@@ -6,6 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "glassbox-ipfto-screening.labels" . | nindent 4 }}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id":"qzC12XfQZs","product_id":"glassbox-bio-molecular-ip-fto-screening","partner_name":"Glassbox Bio"}'
 spec:
   descriptor:
     type: glassbox-ipfto-screening
