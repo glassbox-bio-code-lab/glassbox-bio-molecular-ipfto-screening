@@ -67,7 +67,7 @@ llm:
 storage:
   type: pvc
   pvc:
-    storageClassName: standard
+    storageClassName: ""
     size: 30Gi
   gcs:
     bucket: ""

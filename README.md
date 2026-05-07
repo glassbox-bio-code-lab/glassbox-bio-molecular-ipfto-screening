@@ -130,6 +130,8 @@ Image repositories, tags, and immutable digests are configured in the Helm value
 
 The direct Marketplace verification install validates Kubernetes wiring only. The verification overlay keeps the runtime Job disabled and does not create the customer data PVC; it installs only the application metadata, ConfigMap, ServiceAccount/RBAC, and tester Pod needed to verify the deployment contract. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
 
+Customer runtime installs can still use PVC-backed storage when `job.enabled=true`. Leave `storage.pvc.storageClassName` blank to use the cluster default StorageClass, or set it to an existing cluster StorageClass name. Marketplace verification does not provision a synthetic StorageClass for the wiring-only check.
+
 ## Marketplace Submission Reference
 
 For Google Cloud Marketplace validation, submit the root deployer image path without a tag or digest:

@@ -96,7 +96,7 @@ For GCS mounts, set:
 For PVC mode, set:
 
 - `storage.pvc.size`
-- `storage.pvc.storageClassName`
+- `storage.pvc.storageClassName`, only when you need a specific existing StorageClass. Leave blank to use the cluster default.
 
 ## Optional Entitlement Wiring
 
@@ -128,6 +128,8 @@ The direct GKE bundle includes the same Marketplace image split used by the Pref
 - Verification tester image: `apptest.image.repository:apptest.image.tag`
 
 The direct verification overlay is intentionally wiring-only: it keeps the runtime Job disabled and does not create the customer data PVC. The tester checks application metadata, ConfigMap, ServiceAccount/RBAC, and image wiring. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
+
+Because the verification overlay does not create the runtime PVC, Marketplace validation also does not provision a synthetic StorageClass. Runtime PVC storage remains available for real customer runs when `job.enabled=true`.
 
 For Google Cloud Marketplace validation, use the root deployer image path without a tag or digest:
 
