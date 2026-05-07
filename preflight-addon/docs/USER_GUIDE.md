@@ -72,6 +72,14 @@ The runtime will use real entitlement values when present and will otherwise ski
 
 This bundle includes a deployer image and a separate verification tester image, matching the Preflight UI Hub and Molecular Audit Core Marketplace packaging model.
 
+For Google Cloud Marketplace validation of the root product, use the root deployer image path without a tag or digest:
+
+```text
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
+```
+
+Do not submit a digest-pinned deployer URL. If validation is pointed at an old immutable digest, it can continue to inspect that old manifest even after release tags have been moved to the corrected annotated deployer.
+
 The tester validates only add-on resource wiring:
 
 - runner ServiceAccount

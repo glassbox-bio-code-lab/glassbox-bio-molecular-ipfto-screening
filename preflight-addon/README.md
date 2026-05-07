@@ -24,4 +24,10 @@ See:
 - `examples/preflight-values.ipfto.yaml` for the Preflight registry overlay
 - `docs/USER_GUIDE.md` for installation guidance
 
+For Marketplace validation of the root product, submit the root deployer image path without a tag or digest:
+
+```text
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
+```
+
 The verification tester checks Kubernetes add-on wiring only. It does not run IP/FTO analysis or create scientific inputs.

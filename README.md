@@ -130,6 +130,16 @@ Image repositories, tags, and immutable digests are configured in the Helm value
 
 The verification tester validates Kubernetes install wiring only. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
 
+## Marketplace Submission Reference
+
+For Google Cloud Marketplace validation, submit the root deployer image path without a tag or digest:
+
+```text
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
+```
+
+Do not submit a digest-pinned deployer reference such as `deployer@sha256:...`. Digests are immutable, so an old digest can continue to fail validation even after the release tags have been moved to a corrected manifest.
+
 ## Operational Constraints
 
 - Use real customer-provided request payloads for standalone runs.

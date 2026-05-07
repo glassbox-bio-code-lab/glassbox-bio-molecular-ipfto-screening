@@ -129,4 +129,12 @@ The direct GKE bundle includes the same Marketplace image split used by the Pref
 
 The tester runs only install-contract checks against Kubernetes resources. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
 
+For Google Cloud Marketplace validation, use the root deployer image path without a tag or digest:
+
+```text
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
+```
+
+Do not use a digest-pinned deployer URL in the Marketplace submission field. If validation is pointed at an old immutable digest, it can continue to inspect that old manifest even after `1.0.0`, `1.0`, and `latest` have been moved to the corrected annotated deployer.
+
 The nested `preflight-addon/` package has its own deployer and verification tester because Marketplace validation needs to install that integration surface independently, but it is still part of the same IP/FTO product.
