@@ -55,6 +55,10 @@ properties:
     type: boolean
     default: false
 
+  apptest.enabled:
+    type: boolean
+    default: true
+
   storage.type:
     type: string
     default: pvc

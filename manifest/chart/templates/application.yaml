@@ -31,6 +31,10 @@ spec:
       kind: PersistentVolumeClaim
     - group: ""
       kind: ServiceAccount
+    - group: rbac.authorization.k8s.io
+      kind: Role
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
     - group: batch
       kind: Job
 {{- end }}

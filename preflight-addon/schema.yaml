@@ -14,7 +14,7 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
-    tester:
+    preflight-addon-tester:
       properties:
         apptest.image.repository:
           type: REPO_WITH_REGISTRY

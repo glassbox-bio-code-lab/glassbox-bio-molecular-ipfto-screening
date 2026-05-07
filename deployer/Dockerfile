@@ -1,24 +1,13 @@
 ARG DEPLOYER_BASE_IMAGE=gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.12.12
 ARG GOLANG_BUILD_IMAGE=golang:1.25.9
 ARG HELM_VERSION=v3.20.1
-ARG KUBECTL_130_VERSION=v1.30.14
-ARG KUBECTL_131_VERSION=v1.31.14
+ARG KUBECTL_VERSION=v1.34.3
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
-FROM ${GOLANG_BUILD_IMAGE} AS kubectl-130-builder
-ARG KUBECTL_130_VERSION
+FROM ${GOLANG_BUILD_IMAGE} AS kubectl-builder
+ARG KUBECTL_VERSION
 WORKDIR /src
-RUN curl -fsSLo kubernetes-src.tar.gz "https://github.com/kubernetes/kubernetes/archive/refs/tags/${KUBECTL_130_VERSION}.tar.gz" \
-    && tar -xzf kubernetes-src.tar.gz --strip-components=1 \
-    && /usr/local/go/bin/go mod edit -require=golang.org/x/net@v0.38.0 -require=golang.org/x/oauth2@v0.27.0 -require=github.com/moby/spdystream@v0.5.1 \
-    && /usr/local/go/bin/go work vendor \
-    && PATH=/usr/local/go/bin:$PATH make kubectl KUBE_VERBOSE=0 \
-    && install -D _output/local/go/bin/kubectl /out/kubectl
-
-FROM ${GOLANG_BUILD_IMAGE} AS kubectl-131-builder
-ARG KUBECTL_131_VERSION
-WORKDIR /src
-RUN curl -fsSLo kubernetes-src.tar.gz "https://github.com/kubernetes/kubernetes/archive/refs/tags/${KUBECTL_131_VERSION}.tar.gz" \
+RUN curl -fsSLo kubernetes-src.tar.gz "https://github.com/kubernetes/kubernetes/archive/refs/tags/${KUBECTL_VERSION}.tar.gz" \
     && tar -xzf kubernetes-src.tar.gz --strip-components=1 \
     && /usr/local/go/bin/go mod edit -require=golang.org/x/net@v0.38.0 -require=golang.org/x/oauth2@v0.27.0 -require=github.com/moby/spdystream@v0.5.1 \
     && /usr/local/go/bin/go work vendor \
@@ -53,12 +42,12 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=kubectl-130-builder /out/kubectl /opt/kubectl/1.30/kubectl
-COPY --from=kubectl-131-builder /out/kubectl /opt/kubectl/1.31/kubectl
+COPY --from=kubectl-builder /out/kubectl /opt/kubectl/1.34/kubectl
 COPY --from=helm-builder /out/helm /usr/bin/helm
 
-RUN chmod 0755 /opt/kubectl/1.30/kubectl /opt/kubectl/1.31/kubectl /usr/bin/helm \
-    && ln -snf /opt/kubectl/1.31 /opt/kubectl/default
+RUN rm -rf /opt/kubectl/1.30 /opt/kubectl/1.31 /opt/kubectl/default \
+    && chmod 0755 /opt/kubectl/1.34/kubectl /usr/bin/helm \
+    && ln -snf /opt/kubectl/1.34 /opt/kubectl/default
 
 RUN mkdir -p /data/chart /data-test/chart
 

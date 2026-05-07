@@ -1,5 +1,5 @@
 ARG GOLANG_BUILD_IMAGE=golang:1.25.9
-ARG KUBECTL_VERSION=v1.31.14
+ARG KUBECTL_VERSION=v1.34.3
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
 FROM ${GOLANG_BUILD_IMAGE} AS kubectl-builder

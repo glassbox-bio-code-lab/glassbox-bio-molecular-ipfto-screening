@@ -7,7 +7,7 @@ PYTHON ?= python3
 
 VERSION ?= 1.0.0
 PUBLIC_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
-DEPLOYER_IMAGE ?= $(PUBLIC_REPO)/preflight-addon-deployer:$(VERSION)
+DEPLOYER_IMAGE ?= $(PUBLIC_REPO)/deployer:$(VERSION)
 TESTER_IMAGE ?= $(PUBLIC_REPO)/preflight-addon-tester:$(VERSION)
 MP_SERVICE_NAME ?= services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
