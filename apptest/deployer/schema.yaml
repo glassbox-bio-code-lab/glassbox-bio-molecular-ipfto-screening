@@ -59,22 +59,6 @@ properties:
     type: boolean
     default: true
 
-  storage.type:
-    type: string
-    default: pvc
-
-  storage.pvc.size:
-    type: string
-    default: 30Gi
-
-  storage.pvc.storageClassName:
-    type: string
-    default: ""
-    x-google-marketplace:
-      type: STORAGE_CLASS
-      storageClass:
-        type: SSD
-
 required:
   - name
   - namespace

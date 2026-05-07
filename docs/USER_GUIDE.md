@@ -127,7 +127,7 @@ The direct GKE bundle includes the same Marketplace image split used by the Pref
 - Deployer image: `deployer/Dockerfile`
 - Verification tester image: `apptest.image.repository:apptest.image.tag`
 
-The tester runs only install-contract checks against Kubernetes resources. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
+The direct verification overlay is intentionally wiring-only: it keeps the runtime Job disabled and does not create the customer data PVC. The tester checks application metadata, ConfigMap, ServiceAccount/RBAC, and image wiring. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
 
 For Google Cloud Marketplace validation, use the root deployer image path without a tag or digest:
 

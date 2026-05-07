@@ -28,8 +28,6 @@ spec:
           value: {{ printf "%s-config" (include "glassbox-ipfto-screening.fullname" .) | quote }}
         - name: APP_SERVICE_ACCOUNT
           value: {{ include "glassbox-ipfto-screening.serviceAccountName" . | quote }}
-        - name: APP_PVC_NAME
-          value: {{ printf "%s-data" (include "glassbox-ipfto-screening.fullname" .) | quote }}
         - name: APP_PROJECT_ID
           value: {{ .Values.config.projectId | quote }}
         - name: APP_RUNTIME_IMAGE

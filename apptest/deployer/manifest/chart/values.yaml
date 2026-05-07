@@ -17,9 +17,3 @@ config:
 
 standalone:
   requestJson: ""
-
-storage:
-  type: pvc
-  pvc:
-    storageClassName: ""
-    size: 30Gi

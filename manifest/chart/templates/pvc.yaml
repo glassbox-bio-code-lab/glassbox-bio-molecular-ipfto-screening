@@ -1,4 +1,4 @@
-{{- if and (or .Values.job.enabled .Values.apptest.enabled) (eq .Values.storage.type "pvc") }}
+{{- if and .Values.job.enabled (eq .Values.storage.type "pvc") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

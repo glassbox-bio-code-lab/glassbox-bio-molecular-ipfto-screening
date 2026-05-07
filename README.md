@@ -128,7 +128,7 @@ Image repositories, tags, and immutable digests are configured in the Helm value
 - `manifest/chart/values.yaml`
 - `preflight-addon/chart/ipfto-addon/values.yaml`
 
-The verification tester validates Kubernetes install wiring only. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
+The direct Marketplace verification install validates Kubernetes wiring only. The verification overlay keeps the runtime Job disabled and does not create the customer data PVC; it installs only the application metadata, ConfigMap, ServiceAccount/RBAC, and tester Pod needed to verify the deployment contract. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
 
 ## Marketplace Submission Reference
 

@@ -27,14 +27,20 @@ spec:
   componentKinds:
     - group: ""
       kind: ConfigMap
+    {{- if and .Values.job.enabled (eq .Values.storage.type "pvc") }}
     - group: ""
       kind: PersistentVolumeClaim
+    {{- end }}
     - group: ""
       kind: ServiceAccount
+    {{- if .Values.apptest.enabled }}
     - group: rbac.authorization.k8s.io
       kind: Role
     - group: rbac.authorization.k8s.io
       kind: RoleBinding
+    {{- end }}
+    {{- if .Values.job.enabled }}
     - group: batch
       kind: Job
+    {{- end }}
 {{- end }}

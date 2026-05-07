@@ -25,12 +25,6 @@ actions:
           exit 1
         fi
 
-  - name: PVC exists for customer data mount
-    bashTest:
-      script: |
-        set -euo pipefail
-        kubectl -n "${NAMESPACE}" get pvc "${APP_PVC_NAME}" >/dev/null
-
   - name: Tester sees Marketplace image wiring
     bashTest:
       script: |
