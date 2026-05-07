@@ -138,7 +138,7 @@ For Google Cloud Marketplace validation, submit the root deployer image path wit
 us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
 ```
 
-Do not submit a digest-pinned deployer reference such as `deployer@sha256:...`. Digests are immutable, so an old digest can continue to fail validation even after the release tags have been moved to a corrected manifest.
+Do not submit a digest-pinned deployer reference such as `deployer@sha256:...`. Digests are immutable, so an old digest can continue to be rejected during validation even after the release tags have been moved to a corrected manifest.
 
 ## Operational Constraints
 
