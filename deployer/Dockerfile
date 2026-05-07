@@ -61,7 +61,8 @@ RUN tar -czf /data-test/chart/chart-bundle.tar.gz -C /tmp/marketplace-test chart
     && rm -rf /tmp/marketplace-test
 COPY apptest/deployer/schema.yaml /data-test/schema.yaml
 COPY deployer/marketplace-debug-deploy.sh /usr/local/bin/marketplace-debug-deploy.sh
-RUN chmod 0755 /usr/local/bin/marketplace-debug-deploy.sh
+COPY deployer/deploy_with_tests.sh /bin/deploy_with_tests.sh
+RUN chmod 0755 /usr/local/bin/marketplace-debug-deploy.sh /bin/deploy_with_tests.sh
 
 ENV SCHEMA=/data/schema.yaml
 ENV WAIT_FOR_READY_TIMEOUT=1800

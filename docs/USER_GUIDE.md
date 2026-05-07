@@ -125,9 +125,9 @@ The direct GKE bundle includes the same Marketplace image split used by the Pref
 
 - Runtime image: `image.repository:image.tag`
 - Deployer image: `deployer/Dockerfile`
-- Verification tester image: `apptest.image.repository:apptest.image.tag`
+- Compatibility tester image: `apptest.image.repository:apptest.image.tag`
 
-The direct verification overlay is intentionally wiring-only: it keeps the runtime Job disabled and does not create the customer data PVC. The tester checks application metadata, ConfigMap, ServiceAccount/RBAC, and image wiring. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
+The direct verification overlay is intentionally wiring-only: it keeps the runtime Job disabled and does not create the customer data PVC. The deployer job checks application metadata, ConfigMap, ServiceAccount, and image wiring in-process. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
 
 Because the verification overlay does not create the runtime PVC, Marketplace validation also does not provision a synthetic StorageClass. Runtime PVC storage remains available for real customer runs when `job.enabled=true`.
 

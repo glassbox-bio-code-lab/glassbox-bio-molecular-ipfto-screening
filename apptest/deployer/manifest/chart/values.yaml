@@ -5,7 +5,7 @@ billing:
   enabled: false
 
 apptest:
-  enabled: true
+  enabled: false
 
 config:
   executionMode: standalone

@@ -57,7 +57,7 @@ properties:
 
   apptest.enabled:
     type: boolean
-    default: true
+    default: false
 
 required:
   - name
