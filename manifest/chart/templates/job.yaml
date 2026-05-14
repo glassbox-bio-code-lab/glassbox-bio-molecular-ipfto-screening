@@ -107,6 +107,12 @@ spec:
           args:
             - |
               set -eu
+              finish() {
+                code="$?"
+                touch /var/ubbagent-lifecycle/main.done 2>/dev/null || true
+                exit "${code}"
+              }
+              trap finish EXIT
               if [ "${UBB_REPORTING_ENABLED:-false}" = "true" ]; then
                 if [ "${EXECUTION_MODE}" = "standalone" ]; then
                   UBB_METRIC_NAME="${UBB_METRIC_NAME_STANDALONE}"
@@ -168,11 +174,12 @@ spec:
                   CMD="${CMD} --no-evidence-only"
                 fi
                 echo "[glassbox-ipfto] mode=standalone project=${PROJECT_ID}"
-                exec /bin/sh -c "${CMD}" 2>&1
+                /bin/sh -c "${CMD}" 2>&1
+                exit $?
               fi
 
               echo "[glassbox-ipfto] mode=addon project=${PROJECT_ID} run=${RUN_ID} ipftoMode=${GBX_IPFTO_MODE}"
-              exec python -m ipfto_module.addon_runner \
+              python -m ipfto_module.addon_runner \
                 --project-id "${PROJECT_ID}" \
                 --run-id "${RUN_ID}" \
                 --output-root "${GBX_OUTPUT_ROOT}" \
@@ -183,6 +190,10 @@ spec:
             - name: ipfto-config
               mountPath: /config/request.json
               subPath: request.json
+            {{- if .Values.billing.enabled }}
+            - name: ubbagent-lifecycle
+              mountPath: /var/ubbagent-lifecycle
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if .Values.billing.enabled }}
@@ -201,15 +212,29 @@ spec:
           args:
             - |
               set -eu
-              export MARKETPLACE_REPORTING_KEY_B64="$(base64 /var/marketplace/reporting-key | tr -d '\n')"
+              export MARKETPLACE_REPORTING_KEY_B64="$(cat /var/marketplace/reporting-key | tr -d '\n')"
               envsubst < /etc/ubbagent/config.yaml > /tmp/ubbagent-config.yaml
-              exec ubbagent --config /tmp/ubbagent-config.yaml --state-dir /var/ubbagent/state --local-port {{ .Values.billing.ubbagent.localPort }} -logtostderr -v 2
+              ubbagent --config /tmp/ubbagent-config.yaml --state-dir /var/ubbagent/state --local-port {{ .Values.billing.ubbagent.localPort }} -logtostderr -v 2 &
+              agent_pid="$!"
+              while [ ! -f /var/ubbagent-lifecycle/main.done ]; do
+                if ! kill -0 "${agent_pid}" 2>/dev/null; then
+                  wait "${agent_pid}"
+                  exit "$?"
+                fi
+                sleep 2
+              done
+              sleep 10
+              kill "${agent_pid}" 2>/dev/null || true
+              wait "${agent_pid}" 2>/dev/null || true
+              exit 0
           volumeMounts:
             - name: ubbagent-config
               mountPath: /etc/ubbagent/config.yaml
               subPath: config.yaml
             - name: ubbagent-state
               mountPath: /var/ubbagent/state
+            - name: ubbagent-lifecycle
+              mountPath: /var/ubbagent-lifecycle
             - name: marketplace-reporting
               mountPath: /var/marketplace
               readOnly: true
@@ -235,6 +260,8 @@ spec:
           configMap:
             name: {{ printf "%s-ubbagent" (include "glassbox-ipfto-screening.fullname" .) | quote }}
         - name: ubbagent-state
+          emptyDir: {}
+        - name: ubbagent-lifecycle
           emptyDir: {}
         - name: marketplace-reporting
           secret:

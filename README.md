@@ -121,6 +121,11 @@ The IP/FTO UBB agent image is configured in:
 
 Billing requires the customer deployment to provide the Marketplace reporting Secret expected by the chart. The repository stores deployment configuration and metric names; pricing is controlled by the Marketplace plan.
 
+For UBB agent `serviceName`, use the bare endpoint service name
+`glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog`.
+The `services/...` prefix is used for Marketplace annotations, not for Service
+Control reporting.
+
 ## Image Configuration
 
 Image repositories, tags, and immutable digests are configured in the Helm values files:

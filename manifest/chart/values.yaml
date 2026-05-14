@@ -46,7 +46,7 @@ billing:
       digest: "sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293"
       pullPolicy: IfNotPresent
     localPort: "4567"
-    serviceName: services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
+    serviceName: glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
     metricNameStandalone: ipfto_standalone_run
     metricNameIntegrated: ipfto_integrated_run
 
