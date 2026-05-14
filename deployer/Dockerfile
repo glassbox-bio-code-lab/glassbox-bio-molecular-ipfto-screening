@@ -1,5 +1,5 @@
 ARG DEPLOYER_BASE_IMAGE=gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.12.12
-ARG GOLANG_BUILD_IMAGE=golang:1.25.9
+ARG GOLANG_BUILD_IMAGE=golang:1.25.10
 ARG HELM_VERSION=v3.20.1
 ARG KUBECTL_VERSION=v1.34.3
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
@@ -37,7 +37,7 @@ RUN apt-get update \
     && python3 -m pip install --no-cache-dir --upgrade "pip>=24.0" \
     && python3 -m pip install --no-cache-dir --upgrade \
       "pyOpenSSL>=26,<27" \
-      "cryptography>=46.0.6,<47" \
+      "cryptography>=46.0.7,<47" \
     && apt-get purge -y python3-pip wget gnupg2 \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
