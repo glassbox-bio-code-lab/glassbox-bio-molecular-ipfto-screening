@@ -2,5 +2,5 @@ apiVersion: v2
 name: glassbox-ipfto-addon
 description: Install-time add-on resources for exposing IP/FTO inside an existing Glassbox Preflight deployment.
 type: application
-version: 1.0.0
-appVersion: "1.0.0"
+version: 1.0.1
+appVersion: "1.0.1"
