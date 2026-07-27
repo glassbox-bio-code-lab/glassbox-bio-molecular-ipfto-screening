@@ -133,6 +133,15 @@ Image repositories, tags, and immutable digests are configured in the Helm value
 - `manifest/chart/values.yaml`
 - `preflight-addon/chart/ipfto-addon/values.yaml`
 
+Root Marketplace release `1.0.1` uses these promoted image references:
+
+| Image | Tag | Digest |
+| --- | --- | --- |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto` | `1.0.1` | `sha256:a7a5e254f785c46e0840416d90b9c8593f08c23f1d60e13bf7ea32da36516a6e` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester` | `1.0.1` | `sha256:054c2e0e17721be2b16d18a3d52a305d7184e97399156300add585fb919b13a1` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent` | `1.0.1` | `sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer` | `1.0.1`, `1.0`, `latest` | `sha256:2433e7c34cf13cdc2b0f74c009f30473869ce1e18f6945e2f0956c739ae505b6` |
+
 The direct Marketplace verification install validates Kubernetes wiring only. The verification overlay keeps the runtime Job disabled and does not create the customer data PVC; the deployer job checks the application metadata, ConfigMap, ServiceAccount, and image wiring contract in-process. It does not run IP/FTO scientific analysis and does not create placeholder scientific inputs.
 
 Customer runtime installs can still use PVC-backed storage when `job.enabled=true`. Leave `storage.pvc.storageClassName` blank to use the cluster default StorageClass, or set it to an existing cluster StorageClass name. Marketplace verification does not provision a synthetic StorageClass for the wiring-only check.

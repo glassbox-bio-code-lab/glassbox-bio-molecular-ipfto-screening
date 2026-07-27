@@ -1,4 +1,4 @@
-ARG GOLANG_BUILD_IMAGE=golang:1.25.9
+ARG GOLANG_BUILD_IMAGE=golang:1.25.11
 ARG KUBECTL_VERSION=v1.34.3
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
 
@@ -12,16 +12,24 @@ RUN curl -fsSLo kubernetes-src.tar.gz "https://github.com/kubernetes/kubernetes/
     && PATH=/usr/local/go/bin:$PATH make kubectl KUBE_VERBOSE=0 \
     && install -D _output/local/go/bin/kubectl /out/kubectl
 
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 ARG MP_SERVICE_NAME
 LABEL com.googleapis.cloudmarketplace.product.service.name=${MP_SERVICE_NAME}
 
-RUN apt-get update \
-    && apt-get dist-upgrade -y \
-    && apt-get install -y --no-install-recommends ca-certificates bash jq curl \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -eux; \
+    apt-get update; \
+    apt-get -y dist-upgrade; \
+    apt-get install -y --no-install-recommends ca-certificates bash jq curl libgnutls30 openssl; \
+    gnutls_version="$(dpkg-query -W -f='${Version}' libgnutls30)"; \
+    dpkg --compare-versions "${gnutls_version}" ge 3.7.9-2+deb12u7; \
+    openssl_version="$(dpkg-query -W -f='${Version}' openssl)"; \
+    dpkg --compare-versions "${openssl_version}" ge 3.0.20-1~deb12u2; \
+    libssl_version="$(dpkg-query -W -f='${Version}' libssl3)"; \
+    dpkg --compare-versions "${libssl_version}" ge 3.0.20-1~deb12u2; \
+    dpkg --force-depends --force-remove-essential --purge perl-base; \
+    apt-get autoremove -y; \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=kubectl-builder /out/kubectl /usr/bin/kubectl
 RUN chmod 0755 /usr/bin/kubectl

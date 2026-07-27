@@ -1,5 +1,5 @@
 ARG DEPLOYER_BASE_IMAGE=gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.12.12
-ARG GOLANG_BUILD_IMAGE=golang:1.25.10
+ARG GOLANG_BUILD_IMAGE=golang:1.25.11
 ARG HELM_VERSION=v3.20.1
 ARG KUBECTL_VERSION=v1.34.3
 ARG MP_SERVICE_NAME=services/glassbox-bio-molecular-ip-fto-screening.endpoints.glassbox-bio-public.cloud.goog
@@ -23,6 +23,7 @@ RUN curl -fsSLo helm-src.tar.gz "https://github.com/helm/helm/archive/refs/tags/
       golang.org/x/crypto@v0.46.0 \
       golang.org/x/net@v0.48.0 \
       golang.org/x/oauth2@v0.34.0 \
+      github.com/containerd/containerd@v1.7.33 \
       google.golang.org/grpc@v1.79.3 \
       google.golang.org/protobuf@v1.36.10 \
     && /usr/local/go/bin/go mod download \
@@ -36,10 +37,11 @@ RUN apt-get update \
     && apt-get dist-upgrade -y \
     && python3 -m pip install --no-cache-dir --upgrade "pip>=24.0" \
     && python3 -m pip install --no-cache-dir --upgrade \
-      "pyOpenSSL>=26,<27" \
-      "cryptography>=46.0.7,<47" \
+      "pyOpenSSL==26.3.0" \
+      "cryptography>=49,<50" \
     && apt-get purge -y python3-pip wget gnupg2 \
     && apt-get autoremove -y \
+    && dpkg --force-depends --force-remove-essential --purge perl-base \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=kubectl-builder /out/kubectl /opt/kubectl/1.34/kubectl

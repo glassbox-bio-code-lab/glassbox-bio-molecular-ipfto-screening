@@ -3,8 +3,8 @@ fullnameOverride: ""
 
 image:
   repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
-  tag: "1.0.0"
-  digest: "sha256:b2e8690c52a866a174bea75b1a08f4f2ba2f5799daef47d7d8126a82ceeddff6"
+  tag: "1.0.1"
+  digest: "sha256:a7a5e254f785c46e0840416d90b9c8593f08c23f1d60e13bf7ea32da36516a6e"
   pullPolicy: IfNotPresent
 
 config:
@@ -42,7 +42,7 @@ billing:
   ubbagent:
     image:
       repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent
-      tag: "1.0.0"
+      tag: "1.0.1"
       digest: "sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293"
       pullPolicy: IfNotPresent
     localPort: "4567"
@@ -107,8 +107,8 @@ apptest:
   enabled: false
   image:
     repository: us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester
-    tag: "1.0.0"
-    digest: "sha256:f62f8a4ab36997ec4c2f576ef3617cb6fa5407cb4736d5149351c6e91f3de1b0"
+    tag: "1.0.1"
+    digest: "sha256:054c2e0e17721be2b16d18a3d52a305d7184e97399156300add585fb919b13a1"
     pullPolicy: Always
   resources:
     requests:
