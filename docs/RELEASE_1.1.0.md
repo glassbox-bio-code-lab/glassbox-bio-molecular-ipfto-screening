@@ -5,8 +5,10 @@ Status: the corrected release images are published to `glassbox-bio-public`. The
 Use this direct deployer tag for the Google Cloud Marketplace release:
 
 ```text
-us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer:1.1.0
+us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer:1.0
 ```
+
+Producer Portal continues to use the `1.0` display track. On 2026-08-26, every IP/FTO `:1.0` component alias was refreshed to the same exact digest listed below for `:1.1.0`; `latest` was not changed. The immutable `:1.1.0` tags and digests remain the release source of truth.
 
 The `1.1.0` direct and Preflight add-on images are immutable at these digests:
 
