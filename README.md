@@ -1,5 +1,7 @@
 # Glassbox Bio Molecular IP/FTO Screening
 
+The exact 1.1.0 production image names and digests are recorded in [docs/RELEASE_1.1.0.md](docs/RELEASE_1.1.0.md).
+
 Evidence-linked molecular IP and freedom-to-operate screening for customer-hosted Google Kubernetes Engine environments.
 
 Glassbox Bio Molecular IP/FTO Screening helps small-molecule biotech and pharmaceutical teams review target- and chemistry-specific patent evidence, identify potentially relevant patent families, and surface freedom-to-operate considerations for internal scientific, strategic, and diligence review. It is designed for screening and decision support only. It is not a substitute for formal legal advice, legal opinion, or counsel review.
