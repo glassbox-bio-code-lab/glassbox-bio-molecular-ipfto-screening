@@ -127,6 +127,15 @@ The direct GKE bundle includes the same Marketplace image split used by the Pref
 - Deployer image: `deployer/Dockerfile`
 - Compatibility tester image: `apptest.image.repository:apptest.image.tag`
 
+Root Marketplace release `1.0.1` uses these promoted image references:
+
+| Image | Tag | Digest |
+| --- | --- | --- |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto` | `1.0.1` | `sha256:a7a5e254f785c46e0840416d90b9c8593f08c23f1d60e13bf7ea32da36516a6e` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/tester` | `1.0.1` | `sha256:054c2e0e17721be2b16d18a3d52a305d7184e97399156300add585fb919b13a1` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto/ubbagent` | `1.0.1` | `sha256:83f36b805b6b0b140dc443c5e41214192a0c77dd1e7f7cf62893d92467904293` |
+| `us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer` | `1.0.1`, `1.0`, `latest` | `sha256:2433e7c34cf13cdc2b0f74c009f30473869ce1e18f6945e2f0956c739ae505b6` |
+
 The direct verification overlay is intentionally wiring-only: it keeps the runtime Job disabled and does not create the customer data PVC. The deployer job checks application metadata, ConfigMap, ServiceAccount, and image wiring in-process. It does not execute a scientific IP/FTO run and does not create fabricated inputs.
 
 Because the verification overlay does not create the runtime PVC, Marketplace validation also does not provision a synthetic StorageClass. Runtime PVC storage remains available for real customer runs when `job.enabled=true`.
@@ -137,6 +146,6 @@ For Google Cloud Marketplace validation, use the root deployer image path withou
 us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/deployer
 ```
 
-Do not use a digest-pinned deployer URL in the Marketplace submission field. If validation is pointed at an old immutable digest, it can continue to inspect that old manifest even after `1.0.0`, `1.0`, and `latest` have been moved to the corrected annotated deployer.
+Do not use a digest-pinned deployer URL in the Marketplace submission field. If validation is pointed at an old immutable digest, it can continue to inspect that old manifest even after `1.0.1`, `1.0`, and `latest` have been moved to the corrected annotated deployer.
 
 The nested `preflight-addon/` package has its own deployer and verification tester because Marketplace validation needs to install that integration surface independently, but it is still part of the same IP/FTO product.

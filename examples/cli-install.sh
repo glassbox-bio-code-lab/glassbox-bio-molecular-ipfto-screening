@@ -4,7 +4,7 @@ set -euo pipefail
 NAMESPACE="${NAMESPACE:-glassbox-ipfto}"
 APP_NAME="${APP_NAME:-glassbox-ipfto}"
 IMAGE_REPO="${IMAGE_REPO:-us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto}"
-IMAGE_TAG="${IMAGE_TAG:-1.0.0}"
+IMAGE_TAG="${IMAGE_TAG:-1.0.1}"
 EXECUTION_MODE="${EXECUTION_MODE:-standalone}"
 PROJECT_ID="${PROJECT_ID:-ipfto_demo}"
 RUN_ID="${RUN_ID:-}"
