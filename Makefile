@@ -5,7 +5,7 @@ DOCKER ?= docker
 HELM ?= helm
 PYTHON ?= python3
 
-VERSION ?= 1.0.0
+VERSION ?= 1.0.1
 PRODUCT_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening
 PUBLIC_REPO ?= $(PRODUCT_REPO)/glassbox-ipfto
 DEPLOYER_IMAGE ?= $(PRODUCT_REPO)/deployer:$(VERSION)

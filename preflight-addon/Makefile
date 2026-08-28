@@ -5,7 +5,7 @@ DOCKER ?= docker
 HELM ?= helm
 PYTHON ?= python3
 
-VERSION ?= 1.0.0
+VERSION ?= 1.0.1
 PUBLIC_REPO ?= us-docker.pkg.dev/glassbox-bio-public/glassbox-bio-molecular-ip-fto-screening/glassbox-ipfto
 DEPLOYER_IMAGE ?= $(PUBLIC_REPO)/deployer:$(VERSION)
 TESTER_IMAGE ?= $(PUBLIC_REPO)/preflight-addon-tester:$(VERSION)
